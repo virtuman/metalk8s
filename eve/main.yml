@@ -45,7 +45,7 @@ stages:
         command: >-
           ./.shell-env/metal-k8s/bin/ansible-playbook
           -i eve/single_node/
-          metal-k8s.yml --skip elasticsearch
+          metal-k8s.yml
         env:
           ANSIBLE_FORCE_COLOR: 'true'
     - ShellCommand:
