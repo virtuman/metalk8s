@@ -46,6 +46,13 @@
   # TODO: Check that device do not have any ansible_device_links if
   # VG is to created
   # TODO: Check that device of existing VG are the same if drives are specified
+  #
+- name: "LVM Setup: Check the storage configuration"
+  action: validate_storage
+  tags:
+    - assertion
+  become: False
+  run_once: True
 
 - name: "LVM Setup: Create the LVM Volume Groups"
   lvg:
