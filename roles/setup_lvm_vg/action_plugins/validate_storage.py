@@ -105,7 +105,14 @@ def check_devices_presence(hostvars):
             'metalk8s_lvm_all_vgs', {}).keys():
         mk8s_vg_drives_var = 'metalk8s_lvm_drives_' + lvm_vg
         for device in hostvars.get(mk8s_vg_drives_var):
-            device_name = device.split('/')[-1]
+            # Strip the '/dev/' string to keep only the last part
+
+            # TODO: Check how the devices are represented in a multipath setup
+            device_name = device.replace('/dev/', '')
+            assert 'mapper' not in device_name, \
+                "Device mapper devices are not supported yet. " \
+                "Please use the '/dev/dm-x' form for now"
+
             assert is_device_present(
                 device_name, hostvars['ansible_devices']), \
                 "The device {} is not present".format(device)
@@ -132,7 +139,7 @@ class ActionModule(ActionBase):
         failed = False
 
         for (name, check) in collect_checks():
-            for host in task_vars['hostvars'].keys():
+            for host in task_vars['groups'].get('kube-node', []):
                 try:
                     results = check(task_vars['hostvars'][host])
                     if not results:
