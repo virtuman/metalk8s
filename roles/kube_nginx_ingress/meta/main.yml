@@ -1,2 +1,3 @@
 dependencies:
+    - role: helm_module
     - role: helm_common
