@@ -19,6 +19,29 @@
     var: metalk8s_lvm_all_vgs
   when: debug|bool
 
+# drives|length > 0 means we create the VG
+# drives| length == 0 means the VG must exists
+# - not(item.value.drives|length == 0 and item.key not in ansible_lvm.vgs)
+
+  # TODO: Check that device exists
+  # TODO: Check that device do not have any ansible_device_links if
+  # VG is to created
+  # TODO: Check that device of existing VG are the same if drives are specified
+  #
+- name: "LVM Setup: Check the storage configuration"
+  action: validate_storage
+  tags:
+    - assertion
+  become: False
+  run_once: True
+
+- name: "LVM Setup: Check that the default VG is in the list of managed VGs"
+  tags:
+    - assertion
+  assert:
+    that:
+      - not(metalk8s_lvm_default_vg|bool) or metalk8s_lvm_default_vg in metalk8s_lvm_vgs
+
 - name: "LVM Setup: Check LVM packages"
   package:
     name: '{{ item }}'
@@ -32,10 +55,3 @@
     gather_subset: 'hardware'
     filter: 'ansible_lvm'
   when: lvm_just_installed is changed
-
-- name: "LVM Setup: Check that the default VG is in the list of managed VGs"
-  tags:
-    - assertion
-  assert:
-    that:
-      - not(metalk8s_lvm_default_vg|bool) or metalk8s_lvm_default_vg in metalk8s_lvm_vgs
