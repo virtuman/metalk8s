@@ -6,6 +6,8 @@ Release 1.1.0 (in development)
 Features added
 --------------
 :ghpull:`225` - Figure out the "fail fast" option of ansible (:ghissue:`129`)
+:ghpull:`232` - Add more storage checks regarding the device presence and the
+partition existence on specificied drives (:ghissue:`231`)
 
 Release 1.0.1 (in development)
 ==============================
